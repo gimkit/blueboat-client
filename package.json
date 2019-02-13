@@ -51,8 +51,12 @@
   "engines": {
     "node": ">=8.9"
   },
-  "dependencies": {},
+  "dependencies": {
+    "socket.io-client": "^2.2.0",
+    "socket.io-msgpack-parser": "^2.2.0"
+  },
   "devDependencies": {
+    "@types/socket.io-client": "^1.4.32",
     "ava": "1.0.0-beta.7",
     "codecov": "^3.1.0",
     "cz-conventional-changelog": "^2.1.0",
@@ -84,7 +88,8 @@
     }
   },
   "prettier": {
-    "singleQuote": true
+    "singleQuote": true,
+    "semi": false
   },
   "nyc": {
     "exclude": [
