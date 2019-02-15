@@ -1,11 +1,16 @@
+import { DataChange, StateContainer } from '@gamestdio/state-listener'
+import jsonpatch from 'fast-json-patch'
 import ServerActions from '../lib/constants/ServerActions'
 import Callback from './Callback'
 
-class Room {
+class Room<State = any> {
   public id: string
   public joined: boolean = false
+  // @ts-ignore
+  public state: State = {}
 
   private socket: SocketIOClient.Socket
+  private stateContainer = new StateContainer({})
 
   public onCreate = new Callback()
   public onJoin = new Callback()
@@ -33,7 +38,7 @@ class Room {
     const socket = this.socket
     socket.on(`${this.id}-error`, (e: any) => this.onError.call(e))
     socket.on(`message-${this.id}`, (d: { key: string; data?: any }) => {
-      const { key } = d
+      const { key, data } = d
       if (!key) {
         return
       }
@@ -41,7 +46,25 @@ class Room {
         this.joined = true
         this.onJoin.call()
       }
+      if (key === ServerActions.currentState) {
+        const newState = data
+        this.stateContainer.set(newState)
+        this.state = data
+      }
+      if (key === ServerActions.statePatch) {
+        const newState = jsonpatch.applyPatch({ ...this.state }, data)
+          .newDocument
+        this.stateContainer.set(newState)
+        this.state = newState
+      }
     })
+  }
+
+  public listen = (
+    change: string,
+    callback: (dataChange: DataChange) => any
+  ) => {
+    this.stateContainer.listen(change, callback)
   }
 }
 
