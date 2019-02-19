@@ -8,6 +8,7 @@ import Room from './Room'
 
 class Client {
   private socket: SocketIOClient.Socket
+  private rooms: Room[] = []
 
   public id: string
   public sessionId: string
@@ -34,6 +35,9 @@ class Client {
       this.sessionId = this.socket.id
       this.onConnect.call()
     })
+    this.socket.on('disconnect', () =>
+      this.rooms.forEach(room => room.onLeave.call())
+    )
   }
 
   public createRoom(roomName: string, options?: any) {
@@ -58,6 +62,7 @@ class Client {
   public joinRoom(roomId: string, options?: any, existingRoom?: Room) {
     const room = existingRoom || new Room(this.socket, roomId)
     this.socket.emit(ClientActions.joinRoom, { roomId, options })
+    this.rooms.push(room)
     return room
   }
 }
