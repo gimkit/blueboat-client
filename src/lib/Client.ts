@@ -1,10 +1,13 @@
 import Socket from 'socket.io-client'
 import MessagePackParser from 'socket.io-msgpack-parser'
+import RoomSnapshot from '../types/RoomSnapshot'
 import Callback from './Callback'
 import ClientActions from './constants/ClientActions'
 import { BLUEBOAT_ID } from './constants/LocalStorage'
 import ServerActions from './constants/ServerActions'
 import Room from './Room'
+
+import './Example'
 
 class Client {
   private socket: SocketIOClient.Socket
@@ -16,6 +19,7 @@ class Client {
   public onConnect = new Callback()
   public onConnectError = new Callback()
   public onDisconnect = new Callback()
+  public onAvailableRoomsReceived = new Callback()
 
   constructor(connectString: string) {
     this.socket = Socket(connectString, {
@@ -28,16 +32,19 @@ class Client {
       }
     })
     this.socket.on('error', (e: any) => this.onConnectError.call(e))
-    this.socket.on('disconnect', () => this.onDisconnect.call())
     this.socket.on(ServerActions.clientIdSet, (id: string) => {
       localStorage.setItem(BLUEBOAT_ID, id)
       this.id = id
       this.sessionId = this.socket.id
       this.onConnect.call()
     })
-    this.socket.on('disconnect', () =>
+    this.socket.on(ServerActions.availableRooms, (rooms: RoomSnapshot) => {
+      this.onAvailableRoomsReceived.call(rooms)
+    })
+    this.socket.on('disconnect', () => {
+      this.onDisconnect.call()
       this.rooms.forEach(room => room.onLeave.call())
-    )
+    })
   }
 
   public createRoom(roomName: string, options?: any) {
@@ -64,6 +71,16 @@ class Client {
     this.socket.emit(ClientActions.joinRoom, { roomId, options })
     this.rooms.push(room)
     return room
+  }
+
+  public getAvailableRooms = () => {
+    this.socket.emit(ClientActions.requestAvailableRooms)
+    return new Promise<RoomSnapshot[]>(resolve => {
+      this.onAvailableRoomsReceived.add((rooms: RoomSnapshot[]) => {
+        this.onAvailableRoomsReceived.clear()
+        resolve(rooms)
+      })
+    })
   }
 }
 

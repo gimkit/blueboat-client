@@ -7,9 +7,8 @@ import ClientActions from './constants/ClientActions'
 class Room<State = any> {
   public id: string
   public joined: boolean = false
-  // @ts-ignore
-  public state: State = {}
 
+  private state: string
   private socket: SocketIOClient.Socket
   private stateContainer = new StateContainer({})
 
@@ -53,16 +52,17 @@ class Room<State = any> {
       if (key === ServerActions.currentState) {
         const newState = data
         this.stateContainer.set(newState)
-        this.state = data
-        this.onStateChange.call(data)
+        this.setState(newState)
+        this.onStateChange.call(newState)
         return
       }
       if (key === ServerActions.statePatch) {
-        const newState = jsonpatch.applyPatch({ ...this.state }, data)
-          .newDocument
+        const currentState = this.getState()
+        const newState = jsonpatch.applyPatch(currentState, data).newDocument
         this.stateContainer.set(newState)
-        this.state = newState
+        this.setState(newState)
         this.onStateChange.call(newState)
+
         return
       }
       if (key === ServerActions.removedFromRoom) {
@@ -74,6 +74,12 @@ class Room<State = any> {
     })
   }
 
+  private setState = (newState: any) => {
+    this.state = JSON.stringify(newState)
+  } // we hold a string value so that we don't run into reference issues
+
+  public getState = () => JSON.parse(this.state) as State
+
   public send = (message: any) => {
     this.socket.emit(ClientActions.sendMessage, { room: this.id, message })
   }
@@ -82,7 +88,7 @@ class Room<State = any> {
     change: string,
     callback: (dataChange: DataChange) => any
   ) => {
-    this.stateContainer.listen(change, callback)
+    this.stateContainer.listen(change, callback, true)
   }
 }
 
