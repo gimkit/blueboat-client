@@ -58,7 +58,6 @@
     "socket.io-msgpack-parser": "^2.2.0"
   },
   "devDependencies": {
-    "@types/socket.io-client": "^1.4.32",
     "ava": "1.0.0-beta.7",
     "codecov": "^3.1.0",
     "cz-conventional-changelog": "^2.1.0",
@@ -97,5 +96,8 @@
     "exclude": [
       "**/*.spec.js"
     ]
+  },
+  "peerDependencies": {
+    "@types/socket.io-client": "^1.4.32"
   }
 }
