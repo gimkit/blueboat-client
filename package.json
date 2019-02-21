@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@gamestdio/state-listener": "^3.1.0",
+    "@types/socket.io-client": "^1.4.32",
     "fast-json-patch": "^2.0.7",
     "socket.io-client": "^2.2.0",
     "socket.io-msgpack-parser": "^2.2.0"
@@ -97,7 +98,5 @@
       "**/*.spec.js"
     ]
   },
-  "peerDependencies": {
-    "@types/socket.io-client": "^1.4.32"
-  }
+  "peerDependencies": {}
 }
