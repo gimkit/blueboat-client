@@ -80,8 +80,8 @@ class Room<State = any> {
 
   public getState = () => JSON.parse(this.state) as State
 
-  public send = (message: any) => {
-    this.socket.emit(ClientActions.sendMessage, { room: this.id, message })
+  public send = (key: string, data?: any) => {
+    this.socket.emit(ClientActions.sendMessage, { room: this.id, key, data })
   }
 
   public listen = (
