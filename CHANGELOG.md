@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/joshfeinsilber/blueboat-client/compare/v0.1.8...v0.2.0) (2019-02-22)
+
+
+### Features
+
+* **message:** now requires a key and optional data parameter to act the same as onMessage ([3ea9e9a](https://github.com/joshfeinsilber/blueboat-client/commit/3ea9e9a))
+
+
+
 <a name="0.1.8"></a>
 ## [0.1.8](https://github.com/joshfeinsilber/blueboat-client/compare/v0.1.6...v0.1.8) (2019-02-21)
 
