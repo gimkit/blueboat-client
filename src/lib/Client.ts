@@ -7,8 +7,6 @@ import { BLUEBOAT_ID } from './constants/LocalStorage'
 import ServerActions from './constants/ServerActions'
 import Room from './Room'
 
-import './Example'
-
 class Client {
   private socket: SocketIOClient.Socket
   private rooms: Room[] = []
@@ -31,6 +29,7 @@ class Client {
         id: localStorage.getItem(BLUEBOAT_ID) || ''
       }
     })
+    this.socket.on('connect_error', (e: any) => this.onConnectError.call(e))
     this.socket.on('error', (e: any) => this.onConnectError.call(e))
     this.socket.on(ServerActions.clientIdSet, (id: string) => {
       localStorage.setItem(BLUEBOAT_ID, id)
