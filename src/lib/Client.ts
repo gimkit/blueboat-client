@@ -1,6 +1,5 @@
 import Socket from 'socket.io-client'
 import MessagePackParser from 'socket.io-msgpack-parser'
-import RoomSnapshot from '../types/RoomSnapshot'
 import Callback from './Callback'
 import ClientActions from './constants/ClientActions'
 import { BLUEBOAT_ID } from './constants/LocalStorage'
@@ -17,7 +16,6 @@ class Client {
   public onConnect = new Callback()
   public onConnectError = new Callback()
   public onDisconnect = new Callback()
-  public onAvailableRoomsReceived = new Callback()
 
   constructor(connectString: string) {
     this.socket = Socket(connectString, {
@@ -36,9 +34,6 @@ class Client {
       this.id = id
       this.sessionId = this.socket.id
       this.onConnect.call()
-    })
-    this.socket.on(ServerActions.availableRooms, (rooms: RoomSnapshot) => {
-      this.onAvailableRoomsReceived.call(rooms)
     })
     this.socket.on('disconnect', () => {
       this.onDisconnect.call()
@@ -70,16 +65,6 @@ class Client {
     this.socket.emit(ClientActions.joinRoom, { roomId, options })
     this.rooms.push(room)
     return room
-  }
-
-  public getAvailableRooms = () => {
-    this.socket.emit(ClientActions.requestAvailableRooms)
-    return new Promise<RoomSnapshot[]>(resolve => {
-      this.onAvailableRoomsReceived.add((rooms: RoomSnapshot[]) => {
-        this.onAvailableRoomsReceived.clear()
-        resolve(rooms)
-      })
-    })
   }
 }
 

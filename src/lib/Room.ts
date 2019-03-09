@@ -1,23 +1,21 @@
-import { DataChange, StateContainer } from '@gamestdio/state-listener'
-import jsonpatch from 'fast-json-patch'
+import { DataChange } from '@gamestdio/state-listener'
 import ServerActions from '../lib/constants/ServerActions'
 import Callback from './Callback'
 import ClientActions from './constants/ClientActions'
+import StateCallback from './StateCallback'
 
-class Room<State = any> {
+class Room {
   public id: string
   public joined: boolean = false
 
-  private state: string
   private socket: SocketIOClient.Socket
-  private stateContainer = new StateContainer({})
+  private stateCallback = new StateCallback()
 
   public onCreate = new Callback()
   public onJoin = new Callback()
   public onMessage = new Callback()
   public onLeave = new Callback()
   public onError = new Callback()
-  public onStateChange = new Callback()
 
   constructor(socket: SocketIOClient.Socket, roomId?: string) {
     if (roomId) {
@@ -49,20 +47,8 @@ class Room<State = any> {
         this.onJoin.call()
         return
       }
-      if (key === ServerActions.currentState) {
-        const newState = data
-        this.stateContainer.set(newState)
-        this.setState(newState)
-        this.onStateChange.call(newState)
-        return
-      }
       if (key === ServerActions.statePatch) {
-        const currentState = this.getState()
-        const newState = jsonpatch.applyPatch(currentState, data).newDocument
-        this.stateContainer.set(newState)
-        this.setState(newState)
-        this.onStateChange.call(newState)
-
+        this.stateCallback.call(data.change, data.patch)
         return
       }
       if (key === ServerActions.removedFromRoom) {
@@ -74,12 +60,6 @@ class Room<State = any> {
     })
   }
 
-  private setState = (newState: any) => {
-    this.state = JSON.stringify(newState)
-  } // we hold a string value so that we don't run into reference issues
-
-  public getState = () => JSON.parse(this.state) as State
-
   public send = (key: string, data?: any) => {
     this.socket.emit(ClientActions.sendMessage, { room: this.id, key, data })
   }
@@ -88,7 +68,8 @@ class Room<State = any> {
     change: string,
     callback: (dataChange: DataChange) => any
   ) => {
-    this.stateContainer.listen(change, callback, true)
+    this.send(ClientActions.listen, change)
+    this.stateCallback.listen(change, callback)
   }
 }
 
