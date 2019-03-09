@@ -42,19 +42,23 @@ class Room {
       if (!key) {
         return
       }
+
       if (key === ServerActions.joinedRoom) {
         this.joined = true
         this.onJoin.call()
         return
       }
+
       if (key === ServerActions.statePatch) {
         this.stateCallback.call(data.change, data.patch)
         return
       }
+
       if (key === ServerActions.removedFromRoom) {
         this.onLeave.call()
         return
       }
+
       this.onMessage.call(key, data)
       return
     })
