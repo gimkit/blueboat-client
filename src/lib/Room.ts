@@ -45,6 +45,9 @@ class Room {
 
       if (key === ServerActions.joinedRoom) {
         this.joined = true
+        setInterval(() => {
+          this.send(ClientActions.ping)
+        }, 4000)
         this.onJoin.call()
         return
       }
