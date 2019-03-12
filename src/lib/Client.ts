@@ -24,13 +24,15 @@ class Client {
       parser: MessagePackParser,
       transports: ['websocket'],
       query: {
-        id: localStorage.getItem(BLUEBOAT_ID) || ''
+        id: localStorage ? localStorage.getItem(BLUEBOAT_ID) || '' : ''
       }
     })
     this.socket.on('connect_error', (e: any) => this.onConnectError.call(e))
     this.socket.on('error', (e: any) => this.onConnectError.call(e))
     this.socket.on(ServerActions.clientIdSet, (id: string) => {
-      localStorage.setItem(BLUEBOAT_ID, id)
+      if (localStorage) {
+        localStorage.setItem(BLUEBOAT_ID, id)
+      }
       this.id = id
       this.sessionId = this.socket.id
       this.onConnect.call()
