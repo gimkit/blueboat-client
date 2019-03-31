@@ -1,15 +1,12 @@
-import { DataChange } from '@gamestdio/state-listener'
 import ServerActions from '../lib/constants/ServerActions'
 import Callback from './Callback'
 import ClientActions from './constants/ClientActions'
-import StateCallback from './StateCallback'
 
 class Room {
   public id: string
   public joined: boolean = false
 
   private socket: SocketIOClient.Socket
-  private stateCallback = new StateCallback()
 
   public onCreate = new Callback()
   public onJoin = new Callback()
@@ -49,11 +46,6 @@ class Room {
         return
       }
 
-      if (key === ServerActions.statePatch) {
-        this.stateCallback.call(data.change, data.patch)
-        return
-      }
-
       if (key === ServerActions.removedFromRoom) {
         this.onLeave.call()
         return
@@ -66,14 +58,6 @@ class Room {
 
   public send = (key: string, data?: any) => {
     this.socket.emit(ClientActions.sendMessage, { room: this.id, key, data })
-  }
-
-  public listen = (
-    change: string,
-    callback: (dataChange: DataChange) => any
-  ) => {
-    this.send(ClientActions.listen, change)
-    this.stateCallback.listen(change, callback)
   }
 }
 
