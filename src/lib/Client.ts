@@ -54,9 +54,6 @@ class Client {
     this.socket.on(`${uniqueRequestId}-create`, (roomId: string) => {
       room._setRoomId(roomId)
       room.onCreate.call(roomId)
-      setInterval(() => {
-        room.send(ClientActions.ping)
-      }, 4000)
       this.joinRoom(roomId, options, room)
     })
     this.socket.on(`${uniqueRequestId}-error`, (error: any) => {
