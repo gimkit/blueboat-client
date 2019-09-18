@@ -17,20 +17,32 @@ class Client {
   public onConnectError = new Callback()
   public onDisconnect = new Callback()
 
-  constructor(connectString: string) {
+  private useClientIdSaving = true
+
+  constructor(
+    connectString: string,
+    options?: { blockClientIdSaving?: boolean }
+  ) {
+    if (options && options.blockClientIdSaving) {
+      this.useClientIdSaving = false
+    }
+
     this.socket = Socket(connectString, {
       path: '/blueboat',
       // @ts-ignore
       parser: MessagePackParser,
       transports: ['websocket'],
       query: {
-        id: localStorage ? localStorage.getItem(BLUEBOAT_ID) || '' : ''
+        id:
+          localStorage && this.useClientIdSaving
+            ? localStorage.getItem(BLUEBOAT_ID) || ''
+            : ''
       }
     })
     this.socket.on('connect_error', (e: any) => this.onConnectError.call(e))
     this.socket.on('error', (e: any) => this.onConnectError.call(e))
     this.socket.on(ServerActions.clientIdSet, (id: string) => {
-      if (localStorage) {
+      if (localStorage && this.useClientIdSaving) {
         localStorage.setItem(BLUEBOAT_ID, id)
       }
       this.id = id
