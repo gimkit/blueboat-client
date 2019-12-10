@@ -31,7 +31,6 @@ class Client {
       path: '/blueboat',
       // @ts-ignore
       parser: MessagePackParser,
-      transports: ['websocket'],
       query: {
         id:
           localStorage && this.useClientIdSaving
