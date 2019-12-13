@@ -29,8 +29,9 @@ class Client {
 
     this.socket = Socket(connectString, {
       path: '/blueboat',
-      // @ts-ignore
+      // @ts-ignore,
       parser: MessagePackParser,
+      transports: ['websocket'],
       query: {
         id:
           localStorage && this.useClientIdSaving
@@ -38,6 +39,11 @@ class Client {
             : ''
       }
     })
+
+    this.socket.on('reconnect_attempt', () => {
+      this.socket.io.opts.transports = ['polling', 'websocket']
+    })
+
     this.socket.on('connect_error', (e: any) => this.onConnectError.call(e))
     this.socket.on('error', (e: any) => this.onConnectError.call(e))
     this.socket.on(ServerActions.clientIdSet, (id: string) => {
