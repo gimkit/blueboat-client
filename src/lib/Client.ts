@@ -54,9 +54,9 @@ class Client {
       this.sessionId = this.socket.id
       this.onConnect.call()
     })
-    this.socket.on('disconnect', () => {
-      this.onDisconnect.call()
-      this.rooms.forEach(room => room.onLeave.call())
+    this.socket.on('disconnect', (reason: string) => {
+      this.onDisconnect.call(reason)
+      this.rooms.forEach(room => room.onLeave.call(reason))
     })
   }
 
