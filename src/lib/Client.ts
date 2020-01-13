@@ -17,6 +17,8 @@ class Client {
   public onConnectError = new Callback()
   public onDisconnect = new Callback()
 
+  public latency: number = 0
+
   private useClientIdSaving = true
 
   constructor(
@@ -49,6 +51,9 @@ class Client {
       this.id = id
       this.sessionId = this.socket.id
       this.onConnect.call()
+    })
+    this.socket.on('pong', (latency: number) => {
+      this.latency = latency
     })
     this.socket.on('disconnect', (reason: string) => {
       this.onDisconnect.call(reason)
