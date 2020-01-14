@@ -90,6 +90,10 @@ class Client {
   public disconnect = () => {
     this.socket.disconnect()
   }
+
+  public connect = () => {
+    this.socket.connect()
+  }
 }
 
 export default Client
