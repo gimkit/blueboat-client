@@ -86,6 +86,10 @@ class Client {
     this.rooms.push(room)
     return room
   }
+
+  public disconnect = () => {
+    this.socket.disconnect()
+  }
 }
 
 export default Client
