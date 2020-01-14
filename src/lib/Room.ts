@@ -7,7 +7,6 @@ class Room {
   public joined: boolean = false
 
   private socket: SocketIOClient.Socket
-  private hasJoined: boolean = false
 
   public onCreate = new Callback()
   public onJoin = new Callback()
@@ -43,10 +42,7 @@ class Room {
 
       if (key === ServerActions.joinedRoom) {
         this.joined = true
-        if (!this.hasJoined) {
-          this.onJoin.call()
-        }
-        this.hasJoined = true
+        this.onJoin.call()
         return
       }
 
