@@ -1,8 +1,18 @@
-class Callback {
-  public callbacks: Array<(e?: any, e2?: any) => void> = []
+interface Call {
+  callback: (e?: any, e2?: any) => void
+  timesCalled: number
+  canCallMultipleTimes: boolean
+}
 
-  public add(callback: (e?: any, e2?: any) => void) {
-    this.callbacks.push(callback)
+class Callback {
+  public callbacks: Call[] = []
+
+  public add(callback: (e?: any, e2?: any) => void, onlyCallOnce?: boolean) {
+    this.callbacks.push({
+      callback,
+      timesCalled: 0,
+      canCallMultipleTimes: !onlyCallOnce
+    })
   }
 
   public clear() {
@@ -10,7 +20,18 @@ class Callback {
   }
 
   public call(argument?: any, argument2?: any) {
-    this.callbacks.forEach(callback => callback(argument, argument2))
+    this.callbacks = this.callbacks.map(callback => {
+      if (callback.timesCalled > 0) {
+        if (!callback.canCallMultipleTimes) {
+          return callback
+        }
+      }
+      callback.callback(argument, argument2)
+      return {
+        ...callback,
+        timesCalled: callback.timesCalled + 1
+      }
+    })
   }
 }
 export default Callback
