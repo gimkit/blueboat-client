@@ -48,6 +48,7 @@ class Room {
 
       if (key === ServerActions.removedFromRoom) {
         this.onLeave.call()
+        this.joined = false
         return
       }
 

@@ -51,13 +51,19 @@ class Client {
       this.id = id
       this.sessionId = this.socket.id
       this.onConnect.call()
+      if (this.rooms.length) {
+        this.rooms.forEach(room => this.joinRoom(room.id, {}, room))
+      }
     })
     this.socket.on('pong', (latency: number) => {
       this.latency = latency
     })
     this.socket.on('disconnect', (reason: string) => {
       this.onDisconnect.call(reason)
-      this.rooms.forEach(room => room.onLeave.call(reason))
+      this.rooms.forEach(room => {
+        room.onLeave.call(reason)
+        room.joined = false
+      })
     })
   }
 
