@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.2.60"></a>
+## [0.2.60](https://github.com/joshfeinsilber/blueboat-client/compare/v0.2.58...v0.2.60) (2020-01-14)
+
+
+
 <a name="0.2.58"></a>
 ## [0.2.58](https://github.com/joshfeinsilber/blueboat-client/compare/v0.2.56...v0.2.58) (2020-01-14)
 
