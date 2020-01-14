@@ -16,6 +16,8 @@ class Client {
   public onConnect = new Callback()
   public onConnectError = new Callback()
   public onDisconnect = new Callback()
+  public onReconnect = new Callback()
+  public onReconnectAttempt = new Callback()
 
   public latency: number = 0
 
@@ -58,11 +60,17 @@ class Client {
     this.socket.on('pong', (latency: number) => {
       this.latency = latency
     })
+    this.socket.on('reconnect', (attempt: number) =>
+      this.onReconnect.call(attempt)
+    )
+    this.socket.on('reconnect_attempt', (attempt: number) => {
+      this.onReconnectAttempt.call(attempt)
+    })
     this.socket.on('disconnect', (reason: string) => {
       this.onDisconnect.call(reason)
       this.rooms.forEach(room => {
-        room.onLeave.call(reason)
         room.joined = false
+        room.onLeave.call(reason)
       })
     })
   }
