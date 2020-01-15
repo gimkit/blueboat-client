@@ -55,10 +55,10 @@ class Client {
       }
       this.id = id
       this.sessionId = this.socket.id
-      this.onConnect.call()
       if (this.rooms.length) {
         this.rooms.forEach(room => this.joinRoom(room.id, {}, room))
       }
+      this.onConnect.call()
     })
     this.socket.on('pong', (latency: number) => {
       this.latency = latency
