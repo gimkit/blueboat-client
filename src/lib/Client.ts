@@ -41,7 +41,10 @@ class Client {
           localStorage && this.useClientIdSaving
             ? localStorage.getItem(BLUEBOAT_ID) || ''
             : ''
-      }
+      },
+      reconnectionDelay: 500,
+      reconnectionDelayMax: 1500,
+      randomizationFactor: 0
     })
 
     this.socket.on('connect_error', (e: any) => this.onConnectError.call(e))
