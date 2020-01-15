@@ -97,7 +97,7 @@ class Client {
   public joinRoom(roomId: string, options?: any, existingRoom?: Room) {
     const room = existingRoom || new Room(this.socket, roomId)
     this.socket.emit(ClientActions.joinRoom, { roomId, options })
-    if (!existingRoom) {
+    if (!this.rooms.some(r => r.id === roomId)) {
       this.rooms.push(room)
     }
     return room
