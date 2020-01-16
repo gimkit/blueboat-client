@@ -40,9 +40,10 @@ class Client {
         id:
           localStorage && this.useClientIdSaving
             ? localStorage.getItem(
-                BLUEBOAT_ID + options && options.clientIdSuffix
-                  ? options.clientIdSuffix
-                  : ''
+                BLUEBOAT_ID +
+                  (options && options.clientIdSuffix
+                    ? options.clientIdSuffix
+                    : '')
               ) || ''
             : ''
       },
@@ -56,9 +57,8 @@ class Client {
     this.socket.on(ServerActions.clientIdSet, (id: string) => {
       if (localStorage && this.useClientIdSaving) {
         localStorage.setItem(
-          BLUEBOAT_ID + options && options.clientIdSuffix
-            ? options.clientIdSuffix
-            : '',
+          BLUEBOAT_ID +
+            (options && options.clientIdSuffix ? options.clientIdSuffix : ''),
           id
         )
       }
