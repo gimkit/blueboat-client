@@ -25,7 +25,7 @@ class Client {
 
   constructor(
     connectString: string,
-    options?: { blockClientIdSaving?: boolean }
+    options?: { blockClientIdSaving?: boolean; clientIdSuffix?: string }
   ) {
     if (options && options.blockClientIdSaving) {
       this.useClientIdSaving = false
@@ -39,7 +39,11 @@ class Client {
       query: {
         id:
           localStorage && this.useClientIdSaving
-            ? localStorage.getItem(BLUEBOAT_ID) || ''
+            ? localStorage.getItem(
+                BLUEBOAT_ID + options && options.clientIdSuffix
+                  ? options.clientIdSuffix
+                  : ''
+              ) || ''
             : ''
       },
       reconnectionDelay: 500,
@@ -51,7 +55,12 @@ class Client {
     this.socket.on('error', (e: any) => this.onConnectError.call(e))
     this.socket.on(ServerActions.clientIdSet, (id: string) => {
       if (localStorage && this.useClientIdSaving) {
-        localStorage.setItem(BLUEBOAT_ID, id)
+        localStorage.setItem(
+          BLUEBOAT_ID + options && options.clientIdSuffix
+            ? options.clientIdSuffix
+            : '',
+          id
+        )
       }
       this.id = id
       this.sessionId = this.socket.id

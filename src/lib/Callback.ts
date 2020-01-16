@@ -2,17 +2,25 @@ interface Call {
   callback: (e?: any, e2?: any) => void
   timesCalled: number
   canCallMultipleTimes: boolean
+  id: string
 }
 
 class Callback {
   public callbacks: Call[] = []
 
   public add(callback: (e?: any, e2?: any) => void, onlyCallOnce?: boolean) {
+    const id = Math.random().toString()
     this.callbacks.push({
       callback,
       timesCalled: 0,
-      canCallMultipleTimes: !onlyCallOnce
+      canCallMultipleTimes: !onlyCallOnce,
+      id
     })
+    return () => this.removeCallback(id)
+  }
+
+  private removeCallback = (id: string) => {
+    this.callbacks = this.callbacks.filter(callback => callback.id !== id)
   }
 
   public clear() {
