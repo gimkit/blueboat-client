@@ -1,6 +1,6 @@
 {
   "name": "blueboat-client",
-  "version": "0.2.92",
+  "version": "0.2.94",
   "description": "JS client for blueboat",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
