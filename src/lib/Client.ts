@@ -25,7 +25,11 @@ class Client {
 
   constructor(
     connectString: string,
-    options?: { blockClientIdSaving?: boolean; clientIdSuffix?: string }
+    options?: {
+      transports?: string[]
+      blockClientIdSaving?: boolean
+      clientIdSuffix?: string
+    }
   ) {
     if (options && options.blockClientIdSaving) {
       this.useClientIdSaving = false
@@ -35,7 +39,7 @@ class Client {
       path: '/blueboat',
       // @ts-ignore,
       parser: MessagePackParser,
-      transports: ['websocket'],
+      transports: options.transports || ['websocket'],
       query: {
         id:
           localStorage && this.useClientIdSaving
