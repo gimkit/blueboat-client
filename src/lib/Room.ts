@@ -12,9 +12,9 @@ class Room {
   public onJoinAttempt = new Callback()
   public onCreate = new Callback()
   public onJoin = new Callback()
+  public onJoinError = new Callback()
   public onMessage = new Callback()
   public onLeave = new Callback()
-  public onError = new Callback()
 
   constructor(socket: SocketIOClient.Socket, options: any, roomId?: string) {
     if (roomId) {
@@ -38,7 +38,7 @@ class Room {
 
   private socketListener() {
     const socket = this.socket
-    socket.on(`${this.id}-error`, (e: any) => this.onError.call(e))
+    socket.on(`${this.id}-error`, (e: any) => this.onJoinError.call(e))
     socket.on(`message-${this.id}`, (d: { key: string; data?: any }) => {
       const { key, data } = d
       if (!key) {

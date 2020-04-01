@@ -108,7 +108,7 @@ class Client {
       this.joinRoom(roomId, options, room)
     })
     this.socket.on(`${uniqueRequestId}-error`, (error: any) => {
-      room.onError.call(error)
+      room.onJoinError.call(error)
     })
     return room
   }
