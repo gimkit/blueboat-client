@@ -69,7 +69,9 @@ class Client {
       this.id = id
       this.sessionId = this.socket.id
       if (this.rooms.length) {
-        this.rooms.forEach(room => this.joinRoom(room.id, {}, room))
+        this.rooms.forEach(room =>
+          this.joinRoom(room.id, room.initialJoinOptions, room)
+        )
       }
       this.onConnect.call()
     })
@@ -98,7 +100,8 @@ class Client {
       options,
       uniqueRequestId
     })
-    const room = new Room(this.socket)
+    const room = new Room(this.socket, options)
+
     this.socket.on(`${uniqueRequestId}-create`, (roomId: string) => {
       room._setRoomId(roomId)
       room.onCreate.call(roomId)
@@ -111,7 +114,8 @@ class Client {
   }
 
   public joinRoom(roomId: string, options?: any, existingRoom?: Room) {
-    const room = existingRoom || new Room(this.socket, roomId)
+    const room = existingRoom || new Room(this.socket, options, roomId)
+    room.onJoinAttempt.call()
     if (!room.joined) {
       this.socket.emit(ClientActions.joinRoom, { roomId, options })
     }

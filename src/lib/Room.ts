@@ -5,18 +5,23 @@ import ClientActions from './constants/ClientActions'
 class Room {
   public id: string
   public joined: boolean = false
+  public initialJoinOptions: any = {}
 
   private socket: SocketIOClient.Socket
 
+  public onJoinAttempt = new Callback()
   public onCreate = new Callback()
   public onJoin = new Callback()
   public onMessage = new Callback()
   public onLeave = new Callback()
   public onError = new Callback()
 
-  constructor(socket: SocketIOClient.Socket, roomId?: string) {
+  constructor(socket: SocketIOClient.Socket, options: any, roomId?: string) {
     if (roomId) {
       this.id = roomId
+    }
+    if (options) {
+      this.initialJoinOptions = options
     }
     if (socket) {
       this.socket = socket
