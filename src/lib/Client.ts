@@ -66,6 +66,8 @@ class Client {
           id
         )
       }
+      // @ts-ignore
+      this.socket.io.opts.query.id = id // Update the query variable for consistent reconnects
       this.id = id
       this.sessionId = this.socket.id
       if (this.rooms.length) {
