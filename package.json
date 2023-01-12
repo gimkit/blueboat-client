@@ -4,7 +4,7 @@
   "description": "JS client for blueboat",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
-  "module": "build/module/index.js",
+  "module": "build/main/index.js",
   "repository": "https://github.com/joshfeinsilber/blueboat-client",
   "license": "MIT",
   "keywords": [],
